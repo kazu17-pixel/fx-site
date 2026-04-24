@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ロット計算ツール</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>ロット計算ツール</h1>
+
+<label>資金（円）</label>
+<input type="number" id="balance">
+
+<label>リスク（%）</label>
+<input type="number" id="risk">
+
+<label>損切り幅（pips）</label>
+<input type="number" id="stop">
+
+<button onclick="calc()">計算</button>
+
+<h2 id="result"></h2>
+
+<script>
+function calc() {
+  let balance = document.getElementById("balance").value;
+  let risk = document.getElementById("risk").value;
+  let stop = document.getElementById("stop").value;
+
+  let riskAmount = balance * (risk / 100);
+  let lot = riskAmount / (stop * 100);
+
+  document.getElementById("result").innerText = "ロット数: " + lot.toFixed(2);
+}
+</script>
+
+</body>
+</html>
