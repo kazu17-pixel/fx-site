@@ -128,40 +128,43 @@ function calc() {
 
   switch (pair) {
 
-    // 円絡み（USDJPYなど）
-    case "USDJPY":
-    case "EURJPY":
-    case "GBPJPY":
-      pipValue = accountSize * 0.01;
-      break;
+  case "USDJPY":
+  case "EURJPY":
+  case "GBPJPY":
+    pipValue = accountSize * 0.01;
+    break;
 
-    // ドルストレート（EURUSDなど）
-    case "EURUSD":
-    case "GBPUSD":
-    case "AUDUSD":
-      pipValue = accountSize * 0.0001 * 150; // ドル→円換算（仮150円）
-      break;
+  case "EURUSD":
+  case "GBPUSD":
+  case "AUDUSD":
+    pipValue = accountSize * 0.0001 * 150;
+    break;
 
-    // ゴールド
-    case "XAUUSD":
-      pipValue = accountSize * 0.1 * 150; // 100oz × ドル円換算
-      break;
+  case "XAUUSD":
+    pipValue = accountSize * 0.1 * 150;
+    break;
 
-    // シルバー
-    case "XAGUSD":
-      pipValue = accountSize * 0.01 * 150;
-      break;
+  case "XAGUSD":
+    pipValue = accountSize * 0.01 * 150;
+    break;
 
-    // BTC
-    case "BTCUSD":
-      pipValue = accountSize * 1 * 150;
-      break;
+  case "BTCUSD":
+    pipValue = accountSize * 1 * 150;
+    break;
 
-    // ETH
-    case "ETHUSD":
-      pipValue = accountSize * 0.1 * 150;
-      break;
-  }
+  case "ETHUSD":
+    pipValue = accountSize * 0.1 * 150;
+    break;
+
+  default:
+    document.getElementById("result").innerHTML =
+      "⚠️ 通貨が未対応です";
+    return;
+}
+  if (!pipValue) {
+  document.getElementById("result").innerText = "計算エラー";
+  return;
+}
 
   let lot = riskAmount / (stop * pipValue);
 
