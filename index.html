@@ -174,12 +174,12 @@ function calc() {
   let requiredBalance = requiredRiskAmount / (risk / 100);
 
   if (lot < minLot) {
-    let 부족 = requiredBalance - balance;
+    let shortage = requiredBalance - balance;
 
     document.getElementById("result").innerHTML =
       "⚠️ 必要資金不足<br>" +
       "必要資金: <span>" + requiredBalance.toFixed(0) + " 円</span>" +
-      "<br>あと: <span>" + 부족.toFixed(0) + " 円</span>";
+      "<br>あと: <span>" + shortage.toFixed(0) + " 円</span>";
     return;
   }
 
