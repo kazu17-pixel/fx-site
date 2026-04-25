@@ -1,30 +1,98 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ロット計算ツール</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 400px;
-      margin: auto;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
-    }
-    h1 {
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ロット計算ツール</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f172a;
+  color: white;
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+label {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 15px;
+  border-radius: 10px;
+  border: none;
+  background: #334155;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background: #020617;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.result span {
+  display: block;
+  margin-top: 10px;
+  font-size: 18px;
+}
+</style>
 </head>
+
 <body>
 
 <h1>ロット計算ツール</h1>
+
+<div class="card">
+
+<label>口座タイプ</label>
+<select id="account">
+  <option value="10000">国内口座（1ロット=1万通貨）</option>
+  <option value="100000">海外口座（1ロット=10万通貨）</option>
+</select>
+
+<label>通貨ペア</label>
+<select id="pair">
+  <option value="USDJPY">USDJPY</option>
+  <option value="XAUUSD">XAUUSD（ゴールド）</option>
+</select>
 
 <label>資金（円）</label>
 <input type="number" id="balance">
@@ -35,20 +103,40 @@
 <label>損切り幅（pips）</label>
 <input type="number" id="stop">
 
-<button onclick="calc()">計算</button>
+<button onclick="calc()">計算する</button>
 
-<h2 id="result"></h2>
+<div class="result" id="result"></div>
+
+</div>
 
 <script>
 function calc() {
-  let balance = document.getElementById("balance").value;
-  let risk = document.getElementById("risk").value;
-  let stop = document.getElementById("stop").value;
+  let balance = parseFloat(document.getElementById("balance").value);
+  let risk = parseFloat(document.getElementById("risk").value);
+  let stop = parseFloat(document.getElementById("stop").value);
+  let accountSize = parseFloat(document.getElementById("account").value);
+  let pair = document.getElementById("pair").value;
+
+  if (!balance || !risk || !stop) {
+    document.getElementById("result").innerText = "全部入力して";
+    return;
+  }
 
   let riskAmount = balance * (risk / 100);
-  let lot = riskAmount / (stop * 100);
 
-  document.getElementById("result").innerText = "ロット数: " + lot.toFixed(2);
+  let pipValue;
+
+  if (pair === "USDJPY") {
+    pipValue = accountSize * 0.01;
+  } else if (pair === "XAUUSD") {
+    pipValue = accountSize * 0.1;
+  }
+
+  let lot = riskAmount / (stop * pipValue);
+
+  document.getElementById("result").innerHTML =
+    "ロット数: <span>" + lot.toFixed(2) + "</span>" +
+    "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>";
 }
 </script>
 
