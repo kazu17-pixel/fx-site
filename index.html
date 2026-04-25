@@ -52,12 +52,6 @@ button {
   color: white;
   font-size: 16px;
   font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  opacity: 0.85;
 }
 
 .result {
@@ -66,12 +60,6 @@ button:hover {
   background: #020617;
   border-radius: 12px;
   text-align: center;
-}
-
-.result span {
-  display: block;
-  margin-top: 10px;
-  font-size: 18px;
 }
 </style>
 </head>
@@ -91,29 +79,24 @@ button:hover {
 <label>通貨ペア</label>
 <select id="pair">
   <option value="USDJPY">USDJPY</option>
-
   <option value="EURUSD">EURUSD</option>
   <option value="GBPUSD">GBPUSD</option>
-  <option value="AUDUSD">AUDUSD</option>
-
   <option value="EURJPY">EURJPY</option>
   <option value="GBPJPY">GBPJPY</option>
-
   <option value="XAUUSD">XAUUSD（ゴールド）</option>
   <option value="XAGUSD">XAGUSD（シルバー）</option>
-
   <option value="BTCUSD">BTCUSD</option>
   <option value="ETHUSD">ETHUSD</option>
 </select>
 
 <label>資金（円）</label>
-<input type="number" id="balance">
+<input type="number" id="balance" value="100000">
 
 <label>リスク（%）</label>
-<input type="number" id="risk">
+<input type="number" id="risk" value="1">
 
 <label>損切り幅（pips）</label>
-<input type="number" id="stop">
+<input type="number" id="stop" value="20">
 
 <button onclick="calc()">計算する</button>
 
@@ -123,92 +106,78 @@ button:hover {
 
 <script>
 function calc() {
+
   let balance = parseFloat(document.getElementById("balance").value);
   let risk = parseFloat(document.getElementById("risk").value);
   let stop = parseFloat(document.getElementById("stop").value);
-  let accountSize = parseFloat(document.getElementById("account").value);
   let pair = document.getElementById("pair").value;
 
-  if (!balance || !risk || !stop) {
+  if (balance == null || risk == null || stop == null) {
     document.getElementById("result").innerText = "全部入力して";
     return;
   }
 
   let riskAmount = balance * (risk / 100);
 
-  let pipValue;
+  // ★統一モデル（ここが重要）
+  let pipInYen = 0;
 
   switch (pair) {
 
-  case "USDJPY":
-  case "EURJPY":
-  case "GBPJPY":
-    pipValue = accountSize * 0.01;
-    break;
+    case "USDJPY":
+    case "EURJPY":
+    case "GBPJPY":
+      pipInYen = 100;
+      break;
 
-  case "EURUSD":
-  case "GBPUSD":
-  case "AUDUSD":
-    pipValue = accountSize * 0.0001 * 150;
-    break;
+    case "EURUSD":
+    case "GBPUSD":
+      pipInYen = 150;
+      break;
 
-  case "XAUUSD":
-  pipValue = 100 * 150;
-  break;
+    case "XAUUSD":
+      pipInYen = 1500;
+      break;
 
-  case "XAGUSD":
-    pipValue = accountSize * 0.01 * 150;
-    break;
+    case "XAGUSD":
+      pipInYen = 200;
+      break;
 
-  case "BTCUSD":
-    pipValue = accountSize * 1 * 150;
-    break;
+    case "BTCUSD":
+      pipInYen = 5000;
+      break;
 
-  case "ETHUSD":
-    pipValue = accountSize * 0.1 * 150;
-    break;
+    case "ETHUSD":
+      pipInYen = 3000;
+      break;
+  }
 
-  default:
-    document.getElementById("result").innerHTML =
-      "⚠️ 通貨が未対応です";
-    return;
-}
-  if (!pipValue) {
-  document.getElementById("result").innerText = "計算エラー";
-  return;
-}
-
-  let lot = riskAmount / (stop * pipValue);
+  let lot = riskAmount / (stop * pipInYen);
 
   let minLot = 0.01;
 
-  let requiredRiskAmount = minLot * stop * pipValue;
-  let requiredBalance = requiredRiskAmount / (risk / 100);
-
   if (lot < minLot) {
+
+    let requiredBalance = (minLot * stop * pipInYen) / (risk / 100);
     let shortage = requiredBalance - balance;
 
     document.getElementById("result").innerHTML =
       "⚠️ 必要資金不足<br>" +
-      "必要資金: <span>" + requiredBalance.toFixed(0) + " 円</span>" +
-      "<br>あと: <span>" + shortage.toFixed(0) + " 円</span>";
+      "必要資金: " + requiredBalance.toFixed(0) + " 円<br>" +
+      "不足: " + shortage.toFixed(0) + " 円";
     return;
   }
 
- let riskLevel = "";
+  let riskLevel = "";
 
-if (risk <= 1) {
-  riskLevel = "🟢 安全";
-} else if (risk <= 2) {
-  riskLevel = "🟡 普通";
-} else {
-  riskLevel = "🔴 危険";
-}
+  if (risk <= 1) riskLevel = "🟢 安全";
+  else if (risk <= 2) riskLevel = "🟡 普通";
+  else riskLevel = "🔴 危険";
 
-document.getElementById("result").innerHTML =
-  "ロット数: <span>" + lot.toFixed(3) + "</span>" +
-  "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>" +
-  "<br>リスク評価: <span>" + riskLevel + "</span>";
+  document.getElementById("result").innerHTML =
+    "ロット数: " + lot.toFixed(3) + "<br>" +
+    "想定損失: " + riskAmount.toFixed(0) + " 円<br>" +
+    "リスク評価: " + riskLevel;
 }
 </script>
 
