@@ -110,6 +110,7 @@ function calc() {
   let balance = parseFloat(document.getElementById("balance").value);
   let risk = parseFloat(document.getElementById("risk").value);
   let stop = parseFloat(document.getElementById("stop").value);
+  let lotUnit = parseFloat(document.getElementById("account").value);
   let pair = document.getElementById("pair").value;
 
   if (balance == null || risk == null || stop == null) {
@@ -118,23 +119,23 @@ function calc() {
   }
 
   let riskAmount = balance * (risk / 100);
-
-  // ★統一モデル（ここが重要）
   let pipInYen = 0;
 
   switch (pair) {
 
+    // FX（口座単位影響あり）
     case "USDJPY":
     case "EURJPY":
     case "GBPJPY":
-      pipInYen = 100;
+      pipInYen = lotUnit * 0.01;
       break;
 
     case "EURUSD":
     case "GBPUSD":
-      pipInYen = 150;
+      pipInYen = lotUnit * 0.0001 * 150;
       break;
 
+    // ゴールド
     case "XAUUSD":
       pipInYen = 1500;
       break;
@@ -143,6 +144,7 @@ function calc() {
       pipInYen = 200;
       break;
 
+    // クリプト（固定モデル）
     case "BTCUSD":
       pipInYen = 5000;
       break;
@@ -153,26 +155,23 @@ function calc() {
   }
 
   let lot = riskAmount / (stop * pipInYen);
-
   let minLot = 0.01;
 
   if (lot < minLot) {
 
-    let requiredBalance = (minLot * stop * pipInYen) / (risk / 100);
-    let shortage = requiredBalance - balance;
+    let required = (minLot * stop * pipInYen) / (risk / 100);
+    let shortage = required - balance;
 
     document.getElementById("result").innerHTML =
       "⚠️ 必要資金不足<br>" +
-      "必要資金: " + requiredBalance.toFixed(0) + " 円<br>" +
+      "必要資金: " + required.toFixed(0) + " 円<br>" +
       "不足: " + shortage.toFixed(0) + " 円";
     return;
   }
 
-  let riskLevel = "";
-
-  if (risk <= 1) riskLevel = "🟢 安全";
-  else if (risk <= 2) riskLevel = "🟡 普通";
-  else riskLevel = "🔴 危険";
+  let riskLevel = risk <= 1 ? "🟢 安全" :
+                  risk <= 2 ? "🟡 普通" :
+                  "🔴 危険";
 
   document.getElementById("result").innerHTML =
     "ロット数: " + Math.floor(lot * 100) / 100 + "<br>" +
