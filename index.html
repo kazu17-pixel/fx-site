@@ -196,8 +196,18 @@ function calc() {
   }
 
   document.getElementById("result").innerHTML =
-    "ロット数: <span>" + lot.toFixed(3) + "</span>" +
-    "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>";
+  "ロット数: <span>" + lot.toFixed(3) + "</span>" +
+  "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>" +
+  "<br>リスク評価: <span>" + riskLevel + "</span>";
+let riskLevel = "";
+
+if (risk <= 1) {
+  riskLevel = "🟢 安全";
+} else if (risk <= 2) {
+  riskLevel = "🟡 普通";
+} else {
+  riskLevel = "🔴 危険";
+}
 }
 </script>
 
