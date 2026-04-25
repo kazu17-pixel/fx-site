@@ -153,8 +153,8 @@ function calc() {
     break;
 
   case "XAUUSD":
-    pipValue = accountSize * 0.1 * 150;
-    break;
+  pipValue = 100 * 150;
+  break;
 
   case "XAGUSD":
     pipValue = accountSize * 0.01 * 150;
@@ -195,11 +195,7 @@ function calc() {
     return;
   }
 
-  document.getElementById("result").innerHTML =
-  "ロット数: <span>" + lot.toFixed(3) + "</span>" +
-  "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>" +
-  "<br>リスク評価: <span>" + riskLevel + "</span>";
-let riskLevel = "";
+ let riskLevel = "";
 
 if (risk <= 1) {
   riskLevel = "🟢 安全";
@@ -208,6 +204,11 @@ if (risk <= 1) {
 } else {
   riskLevel = "🔴 危険";
 }
+
+document.getElementById("result").innerHTML =
+  "ロット数: <span>" + lot.toFixed(3) + "</span>" +
+  "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>" +
+  "<br>リスク評価: <span>" + riskLevel + "</span>";
 }
 </script>
 
