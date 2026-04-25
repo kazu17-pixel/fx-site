@@ -175,7 +175,7 @@ function calc() {
   else riskLevel = "🔴 危険";
 
   document.getElementById("result").innerHTML =
-    "ロット数: " + lot.toFixed(3) + "<br>" +
+    "ロット数: " + Math.floor(lot * 100) / 100 + "<br>" +
     "想定損失: " + riskAmount.toFixed(0) + " 円<br>" +
     "リスク評価: " + riskLevel;
 }
