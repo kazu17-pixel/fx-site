@@ -126,20 +126,48 @@ function calc() {
 
   let pipValue;
 
-  if (pair === "USDJPY") {
-    pipValue = accountSize * 0.01;
-  } else if (pair === "XAUUSD") {
-    pipValue = accountSize * 0.1;
+  switch (pair) {
+
+    // 円絡み（USDJPYなど）
+    case "USDJPY":
+    case "EURJPY":
+    case "GBPJPY":
+      pipValue = accountSize * 0.01;
+      break;
+
+    // ドルストレート（EURUSDなど）
+    case "EURUSD":
+    case "GBPUSD":
+    case "AUDUSD":
+      pipValue = accountSize * 0.0001 * 150; // ドル→円換算（仮150円）
+      break;
+
+    // ゴールド
+    case "XAUUSD":
+      pipValue = accountSize * 0.1 * 150; // 100oz × ドル円換算
+      break;
+
+    // シルバー
+    case "XAGUSD":
+      pipValue = accountSize * 0.01 * 150;
+      break;
+
+    // BTC
+    case "BTCUSD":
+      pipValue = accountSize * 1 * 150;
+      break;
+
+    // ETH
+    case "ETHUSD":
+      pipValue = accountSize * 0.1 * 150;
+      break;
   }
 
   let lot = riskAmount / (stop * pipValue);
 
   let minLot = 0.01;
 
-  // 最小ロットで必要なリスク額
   let requiredRiskAmount = minLot * stop * pipValue;
-
-  // 必要資金（逆算）
   let requiredBalance = requiredRiskAmount / (risk / 100);
 
   if (lot < minLot) {
@@ -153,7 +181,7 @@ function calc() {
   }
 
   document.getElementById("result").innerHTML =
-    "ロット数: <span>" + lot.toFixed(2) + "</span>" +
+    "ロット数: <span>" + lot.toFixed(3) + "</span>" +
     "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>";
 }
 </script>
