@@ -134,6 +134,24 @@ function calc() {
 
   let lot = riskAmount / (stop * pipValue);
 
+  let minLot = 0.01;
+
+  // 最小ロットで必要なリスク額
+  let requiredRiskAmount = minLot * stop * pipValue;
+
+  // 必要資金（逆算）
+  let requiredBalance = requiredRiskAmount / (risk / 100);
+
+  if (lot < minLot) {
+    let 부족 = requiredBalance - balance;
+
+    document.getElementById("result").innerHTML =
+      "⚠️ 必要資金不足<br>" +
+      "必要資金: <span>" + requiredBalance.toFixed(0) + " 円</span>" +
+      "<br>あと: <span>" + 부족.toFixed(0) + " 円</span>";
+    return;
+  }
+
   document.getElementById("result").innerHTML =
     "ロット数: <span>" + lot.toFixed(2) + "</span>" +
     "想定損失: <span>" + riskAmount.toFixed(0) + " 円</span>";
